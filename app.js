@@ -1,73 +1,43 @@
 require("dotenv").config();
-const express = require('express');
+
+const express = require("express");
 const app = express();
 
 const multer = require("multer");
 
+const mongoose = require("mongoose");
 
+const path = require("path");
 
-const mongoose = require('mongoose');
+const methodOverride = require("method-override");
 
-const path = require('path');
+const ejsMate = require("ejs-mate");
 
-const methodOverride =
-    require("method-override");
+const session = require("express-session");
 
-const ejsMate =
-    require("ejs-mate");
+const flash = require("connect-flash");
 
-const session =
-    require("express-session");
+const passport = require("passport");
 
-const flash =
-    require("connect-flash");
+const LocalStrategy = require("passport-local");
 
-const passport =
-    require("passport");
+const User = require("./models/user.js");
 
-const LocalStrategy =
-    require("passport-local");
+const ExpressError = require("./utils/ExpressError.js");
 
-const User =
-    require("./models/user.js");
-
-const ExpressError =
-    require("./utils/ExpressError.js");
-
-const { cloudinary } =
-    require("./utils/cloudinary.js");
+const { cloudinary } = require("./utils/cloudinary.js");
 
 // ================= ROUTES =================
 
-const listingRoutes =
-    require("./routes/listing.js");
+const listingRoutes = require("./routes/listing.js");
 
-const reviewRoutes =
-    require("./routes/review.js");
+const reviewRoutes = require("./routes/review.js");
 
-const userRoutes =
-    require("./routes/user.js");
+const userRoutes = require("./routes/user.js");
 
 // ================= DATABASE =================
 
-const MONGO_URL =
-    process.env.MONGO_URL;
-    
-
-async function main() {
-
-    await mongoose.connect(MONGO_URL);
-}
-
-main()
-    .then(() => {
-        console.log(
-            "✅ Connected to MongoDB"
-        );
-    })
-    .catch((err) => {
-        console.log(err);
-    });
+const MONGO_URL = process.env.MONGO_URL;
 
 // ================= CONFIG =================
 
@@ -195,8 +165,11 @@ app.use(
     userRoutes
 );
 
-// ================= ROOT =================
+// ================= ROOT ROUTE =================
 
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
 
 // ================= 404 HANDLER =================
 
@@ -213,13 +186,21 @@ app.use((req, res, next) => {
 // ================= ERROR HANDLER =================
 
 app.use(async (err, req, res, next) => {
+
     if (req.file?.filename) {
+
         try {
-            await cloudinary.uploader.destroy(req.file.filename, {
-                resource_type: "image",
-                invalidate: true,
-            });
+
+            await cloudinary.uploader.destroy(
+                req.file.filename,
+                {
+                    resource_type: "image",
+                    invalidate: true,
+                }
+            );
+
         } catch (cleanupErr) {
+
             console.log(cleanupErr);
         }
     }
@@ -229,9 +210,15 @@ app.use(async (err, req, res, next) => {
         message = "Something went wrong!"
     } = err;
 
-    if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+    if (
+        err instanceof multer.MulterError &&
+        err.code === "LIMIT_FILE_SIZE"
+    ) {
+
         statusCode = 400;
-        message = "Image size must be 5 MB or smaller.";
+
+        message =
+            "Image size must be 5 MB or smaller.";
     }
 
     console.log(err);
@@ -243,13 +230,33 @@ app.use(async (err, req, res, next) => {
         });
 });
 
-// ================= SERVER =================
+// ================= START SERVER =================
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
+async function startServer() {
 
-    console.log(
-        "🚀 Server running on port 8080"
-    );
-});
+    try {
+
+        await mongoose.connect(MONGO_URL);
+
+        console.log("✅ Connected to MongoDB");
+
+        app.listen(PORT, () => {
+
+            console.log(
+                `🚀 Server running on port ${PORT}`
+            );
+        });
+
+    } catch (err) {
+
+        console.log(
+            "❌ MongoDB Connection Error"
+        );
+
+        console.log(err);
+    }
+}
+
+startServer();
