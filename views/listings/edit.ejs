@@ -1,0 +1,122 @@
+<% layout("/layouts/boilerplate") -%>
+<%
+  const currentImageUrl =
+    listing.image &&
+    listing.image.url &&
+    !listing.image.url.startsWith("/uploads/")
+      ? listing.image.url
+      : "https://images.unsplash.com/photo-1506744038136-46273834b3fb";
+%>
+
+<div class="row">
+  <div class="col-8 offset-2">
+    <br><br><br>
+
+    <h2>Edit Listing</h2>
+
+    <form
+      method="POST"
+      action="/listings/<%= listing._id %>?_method=PUT"
+      enctype="multipart/form-data"
+      novalidate
+      class="needs-validation"
+    >
+
+      <label for="title" class="form-label">Title</label>
+      <input
+        name="listing[title]"
+        id="title"
+        value="<%= listing.title %>"
+        placeholder="Title"
+        type="text"
+        class="form-control"
+        required>
+      <div class="invalid-feedback">Title is required</div>
+
+      <br>
+
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        name="listing[description]"
+        id="description"
+        placeholder="Description"
+        class="form-control"
+        required><%= listing.description %></textarea>
+      <div class="invalid-feedback">Description is required</div>
+
+      <br>
+
+      <label class="form-label">Current Image</label>
+      <img
+        src="<%= currentImageUrl %>"
+        class="upload-preview current-image-preview"
+        alt="Current listing image"
+      >
+
+      <label for="listingImage" class="form-label mt-3">Replace Image</label>
+      <input
+        name="listing[image]"
+        id="listingImage"
+        type="file"
+        class="form-control image-upload-input"
+        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+        data-preview-target="listingImagePreview">
+      <div class="form-text">
+        JPG, JPEG, PNG, or WEBP. Leave blank to keep the current image.
+      </div>
+      <div class="invalid-feedback">
+        Please upload a JPG, JPEG, PNG, or WEBP image.
+      </div>
+      <img
+        id="listingImagePreview"
+        class="upload-preview d-none"
+        alt="New listing image preview"
+      >
+
+      <br>
+
+      <label for="price" class="form-label">Price</label>
+      <input
+        name="listing[price]"
+        id="price"
+        value="<%= listing.price %>"
+        placeholder="Price"
+        type="number"
+        min="0"
+        class="form-control"
+        required>
+      <div class="invalid-feedback">Price is required</div>
+
+      <br>
+
+      <label for="location" class="form-label">Location</label>
+      <input
+        name="listing[location]"
+        id="location"
+        value="<%= listing.location %>"
+        placeholder="Location"
+        type="text"
+        class="form-control"
+        required>
+      <div class="invalid-feedback">Location is required</div>
+
+      <br>
+
+      <label for="country" class="form-label">Country</label>
+      <input
+        name="listing[country]"
+        id="country"
+        value="<%= listing.country %>"
+        placeholder="Country"
+        type="text"
+        class="form-control"
+        required>
+      <div class="invalid-feedback">Country is required</div>
+
+      <br>
+
+      <button type="submit" class="btn btn-dark add-btn">Update</button>
+
+    </form>
+  </div>
+</div>

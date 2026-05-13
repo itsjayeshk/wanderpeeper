@@ -1,0 +1,106 @@
+/* =========================
+   STAR RATING INPUT
+========================= */
+
+.starability-slot {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 6px;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.starability-slot input {
+    display: none;
+}
+
+.starability-slot label {
+    font-size: 2rem;
+    color: #d4d4d4;
+    cursor: pointer;
+    transition: 0.25s ease;
+    line-height: 1;
+}
+
+/* STAR SYMBOL */
+.starability-slot label::before {
+    content: "★";
+}
+
+/* HOVER EFFECT */
+.starability-slot label:hover,
+.starability-slot label:hover ~ label {
+    color: #ffc107;
+    transform: scale(1.08);
+}
+
+/* SELECTED STARS */
+.starability-slot input:checked ~ label {
+    color: #ffc107;
+}
+
+/* =========================
+   REVIEW DISPLAY STARS
+========================= */
+
+.starability-result {
+    position: relative;
+    display: inline-block;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    color: #d4d4d4;
+    line-height: 1;
+}
+
+/* EMPTY STARS */
+.starability-result::before {
+    content: "★★★★★";
+}
+
+/* FILLED STARS */
+.starability-result::after {
+    content: "★★★★★";
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #ffc107;
+}
+
+/* WIDTH BASED ON RATING */
+.starability-result[data-rating="1"]::after {
+    width: 20%;
+}
+
+.starability-result[data-rating="2"]::after {
+    width: 40%;
+}
+
+.starability-result[data-rating="3"]::after {
+    width: 60%;
+}
+
+.starability-result[data-rating="4"]::after {
+    width: 80%;
+}
+
+.starability-result[data-rating="5"]::after {
+    width: 100%;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+    .starability-slot label {
+        font-size: 1.7rem;
+    }
+
+    .starability-result {
+        font-size: 1rem;
+    }
+}
